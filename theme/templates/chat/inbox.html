@@ -1,0 +1,175 @@
+{% extends 'chat/messages_list.html' %}
+{% block message %}
+
+{% if messages %}
+<!-- message head -->
+<div class=" bg-black h-12">
+    <h2 class="text-start text-white py-2 pb-5 px-5 text-2xl font-semibold font-sans">
+            {{ other_person.username }}
+    </h2>
+</div>
+<!-- message head end -->
+<div class=" bg-gray-300 h-[600px]">
+    <!-- read the messages  -->
+    <div class="flex flex-col-reverse h-[90%] w-full">
+        <!-- conversation -->
+        <div class="flex flex-nowrap scroll-smooth overflow-y-scroll overflow-x-hidden flex-col pt-2 space-y-4">
+            {% for message in messages %}
+
+            {% if message.sender == other_person %}
+            <!-- text from person -->
+            <div class=" flex flex-col justify-self-start bg-blue-500 w-1/2 mr-[50%] ml-4 rounded-md px-3 py-2
+            text-start">
+                <p class=" font-medium">
+                    {{ message.message }}
+                </p>
+
+                <small class="text-slate-700 text-right">
+                    <time datetime="2020-01-01">
+                        {{ message.date }}
+                    </time>
+                </small>
+            </div>
+            <!-- text from person end -->
+            {% else %}
+
+            <!-- text from me -->
+            <div class="flex flex-col justify-self-end bg-white
+                            w-1/2 ml-[49%] mr-4 rounded-md px-3 py-2 text-start ">
+                <p class=" font-medium">
+                    {{ message.message }}
+                </p>
+
+                <small class="text-slate-700 text-right">
+                    <time datetime="2020-01-01">
+                        {{ message.date }}
+                    </time>
+                </small>
+            </div>
+            <!-- text from me end -->
+            {% endif %}
+
+            {% endfor %}
+        </div>
+        <!-- conversation end -->
+    </div>
+    <!-- read the messages end -->
+
+
+    <form action="{% url 'chat:inbox' other_person.username %}" method="POST">
+        {% csrf_token %}
+        <!-- type a message -->
+        <footer class=" h-[10%] border-t-2 flex-row">
+            <!-- emoji icon -->
+            <i class="fa-solid fa-face-smile-beam text-[20px] px-2 pl-3"></i>
+            <!-- emoji icon end -->
+            <!-- attachment icon -->
+            <i class="fa-solid fa-link text-[20px] px-2"></i>
+            <!-- attachment icon end -->
+
+            <!--passing the person that sent the message as the recipient to the message form -->
+            <input type="hidden" name="reciever" value="{{ other_person.pk }}">
+
+            <!--passing you -->
+            <input type="hidden" name="you" value="{{ you.pk }}">
+            <!-- message sender end-->
+            <!-- input box -->
+            <input type="text" name="message"
+                    class="
+                    form-control
+                    w-10/12
+                    px-3
+                    py-1.5
+                    mx-auto
+                    mt-2
+                    text-base
+                    font-normal
+                    text-gray-700
+                    bg-white bg-clip-padding
+                    border border-solid border-gray-300
+                    rounded
+                    transition
+                    ease-in-out
+                    m-0
+                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                placeholder="Type a message...">
+            <!-- input box end -->
+            <!-- send button -->
+            <button aria-hidden="true" type="submit">
+                <i class="fa fa-paper-plane text-[20px]"></i>
+            </button>
+
+
+        </footer>
+        <!-- type a message end -->
+    </form>
+
+</div>
+
+{% else %}
+
+<!-- message head -->
+<div class=" bg-black h-12">
+    <h2 class="text-start text-white py-2 pb-5 px-5 text-2xl font-semibold font-sans">
+            {{ other_person.username }}
+    </h2>
+</div>
+<!-- message head end -->
+<div class=" bg-gray-300 h-[600px]">
+
+    <!-- No messages yet alert -->
+    <div class="flex justify-center h-[90%] w-full">
+        <div class=" justify-self-center m-auto bg-slate-400 rounded-md font-medium px-4 py-1">
+            <p class="text-start">
+                No messages yet
+            </p>
+        </div>
+    </div>
+    <!-- No messages yet alert end -->
+
+
+    <form action="{% url 'chat:inbox' other_person.username %}" method="POST">
+        {% csrf_token %}
+        <!-- type a message -->
+        <footer class=" h-[10%] max-h-[12%] border-t-2 flex-row">
+            <!-- emoji icon -->
+            <i class="fa-solid fa-face-smile-beam text-[20px] px-2 pl-3"></i>
+            <!-- emoji icon end -->
+            <!-- attachment icon -->
+            <i class="fa-solid fa-link text-[20px] px-2"></i>
+            <!-- attachment icon end -->
+
+            <!--passing the person that sent the message as the recipient to the message form -->
+            <input type="hidden" name="reciever" value="{{ other_person.pk }}">
+
+            <!--passing you -->
+            <input type="hidden" name="you" value="{{ you.pk }}">
+            <!-- message sender end-->
+            <!-- input box -->
+            <textarea type="text" name="message"
+                    class="
+                    block p-2.5
+                    flex-nowrap
+                    w-full
+                    text-sm
+                    text-gray-900
+                    bg-gray-50
+                    rounded-lg border
+                    border-gray-300
+                    focus:ring-blue-500
+                    focus:border-blue-500"
+                row="2" cols="2"
+                placeholder="Type a message..."></textarea>
+            <!-- input box end -->
+            <!-- send button -->
+            <button aria-hidden="true" type="submit">
+                <i class="fa fa-paper-plane text-[20px]"></i>
+            </button>
+
+
+        </footer>
+        <!-- type a message end -->
+    </form>
+
+{% endif %}
+{% endblock %}

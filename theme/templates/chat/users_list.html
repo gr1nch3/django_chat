@@ -1,0 +1,37 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block contacts %}
+
+{% for u in users %}
+<!-- contact box 1-->
+<div class=" mb-1 bg-slate-300 h-16 flex flex-row border-y border-slate-600 cursor-pointer"
+    onclick="location.href='{% url 'chat:inbox' u %}';">
+    <!-- user image -->
+    <img class=" block rounded-full h-12 mx-auto mt-2 ml-2" src="{% static '/img/default-user3.jpg' %}" alt="User">
+    <!-- user image end -->
+
+    <!-- username and message-->
+    <div class="flex flex-col flex-nowrap overflow-y-scroll overflow-x-hidden ml-4 my-1 mx-auto text-start space-x-1 truncate">
+        <!-- username -->
+        <p class=" text-black text-lg text-left font-semibold font-sans">
+            {{u}}
+        </p>
+        <!-- username end -->
+
+        <!-- message -->
+        <p class="text-center font-medium text-slate-500 truncate">
+            Hi there!
+        </p>
+        <!-- message end -->
+    </div>
+    <!-- username and message end -->
+    <!-- grow div -->
+    <div class="grow"></div>
+    <!-- grow div end -->
+
+
+</div>
+<!-- contact box 1 end  -->
+{% endfor %}
+
+{% endblock %}
