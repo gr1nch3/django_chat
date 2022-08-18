@@ -47,3 +47,20 @@
 {% endfor %}
 
 {% endblock %}
+
+{% block message %}
+<div class=" bg-gray-300 h-[600px]">
+
+    <!-- No messages yet alert -->
+    <div class="flex h-full w-full">
+        <div class="bg-slate-400 rounded-md font-medium">
+            <!-- image -->
+            <img class=" flex h-full w-full" src="{% static '/img/welcome_img.png' %}" alt="Welcome">
+            <!-- image end -->
+        </div>
+    </div>
+    <!-- No messages yet alert end -->
+</div>
+
+
+{% endblock %}

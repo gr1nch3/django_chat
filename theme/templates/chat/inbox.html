@@ -146,20 +146,25 @@
             <input type="hidden" name="you" value="{{ you.pk }}">
             <!-- message sender end-->
             <!-- input box -->
-            <textarea type="text" name="message"
+            <input type="text" name="message"
                     class="
-                    block p-2.5
-                    flex-nowrap
-                    w-full
-                    text-sm
-                    text-gray-900
-                    bg-gray-50
-                    rounded-lg border
-                    border-gray-300
-                    focus:ring-blue-500
-                    focus:border-blue-500"
-                row="2" cols="2"
-                placeholder="Type a message..."></textarea>
+                    form-control
+                    w-10/12
+                    px-3
+                    py-1.5
+                    mx-auto
+                    mt-2
+                    text-base
+                    font-normal
+                    text-gray-700
+                    bg-white bg-clip-padding
+                    border border-solid border-gray-300
+                    rounded
+                    transition
+                    ease-in-out
+                    m-0
+                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                placeholder="Type a message...">
             <!-- input box end -->
             <!-- send button -->
             <button aria-hidden="true" type="submit">

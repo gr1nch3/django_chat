@@ -12,7 +12,7 @@
 
 	<!-- adding tailwindcss -->
 	<link href="{% static "css/output.css" %}" rel="stylesheet">
-	<script src="https://cdn.tailwindcss.com"></script>
+	{% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
 	<!-- font awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
 
@@ -21,9 +21,11 @@
 
 <!-- the head of the page  -->
 <header class="flex flex-row sm:justify-between space-x-4 bg-black h-16">
-	<h3 class="text-center text-white py-5 px-10 text-4xl font-bold">
-		Chats!
-	</h3>
+	<a href="{% url 'chat:message_list' %}">
+		<h3 class="text-center text-white py-5 px-10 text-4xl font-bold">
+			Chats!
+		</h3>
+	</a>
 
 	<!-- Registration and logout buttons-->
 	<div class="flex flex-row justify-between items-center">
@@ -116,14 +118,16 @@
 	<!-- content  -->
 	<div class="bg-green-500 mx-auto h-[100%] pr-40 pl-40">
 		<!-- creating a flex for the inbox and the messages -->
-		<div class="flex py-2">
+		<div class="flex py-1 h-[600]">
 			<!-- showing all contacts -->
 			<div class="flex-auto w-[30%] h-96">
 				<!-- the head -->
 				<div class="flex flex-row justify-between bg-slate-900 h-12">
-					<h2 class="text-start text-white py-2 pb-1 px-5 text-2xl font-semibold font-sans">
-						inbox
-					</h2>
+					<a href="{% url 'chat:message_list' %}">
+						<h2 class="text-start text-white py-2 pb-1 px-5 text-2xl font-semibold font-sans">
+							inbox
+						</h2>
+					</a>
 					<!-- add button -->
 					<div class="block justify-self-end px-5 py-2">
 						<button class=" hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full"
@@ -136,7 +140,7 @@
 				<!-- head end -->
 
 				<!-- the body -->
-				<div class="flex flex-col pt-1 bg-slate-50 h-[600px]">
+				<div class="flex flex-col flex-nowrap overflow-x-hidden overflow-y-scroll	 pt-1 bg-slate-50 h-[600px]">
 					{% block contacts %}
 					{% endblock%}
 				</div>
@@ -146,8 +150,7 @@
 			<!-- contacts end -->
 
 			<!-- a container for the messages and chatting -->
-			<div class="flex-auto w-3/4">
-
+			<div class="flex-auto w-3/4 h-96">
 				<!-- message body -->
 				{% block message %}
 				{% endblock %}
