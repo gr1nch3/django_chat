@@ -73,7 +73,7 @@ class messages_list(LoginRequiredMixin, ListView):
             if mess[i].sender != user:
                 other_users.append(mess[i].sender)
             else:
-                other_users.append(mess[i].reciever)
+                other_users.append(mess[i].recipient)
 
         # getting the latest message from the other person
         # print("length of other_user", len(other_users))
@@ -116,15 +116,15 @@ class inbox(LoginRequiredMixin, DetailView):
             if mess[i].sender != user:
                 other_users.append(mess[i].sender)
             else:
-                other_users.append(mess[i].reciever)
+                other_users.append(mess[i].recipient)
 
-        sender = other_user  # the sender of the message will be the reciever of the most recent message after it's sent
-        reciever = user
+        sender = other_user  # the sender of the message will be the recipient of the most recent message after it's sent
+        recipient = user
 
-        context['messages'] = Message.get_all_messages(sender, reciever)  # get all the messages between the sender and the reciever
+        context['messages'] = Message.get_all_messages(sender, recipient)  # get all the messages between the sender and the recipient
         context['message'] = Message.get_message_list(user) # for message_list
         context['other_person'] = other_user  # get the sender of the message (provide the sender's username to the send_message function)
-        context['you'] = user  # get the reciever of the message (provide the reciever's username to the send_message function)
+        context['you'] = user  # get the recipient of the message (provide the recipient's username to the send_message function)
         context['other_users'] = other_users
 
         return context
@@ -132,17 +132,17 @@ class inbox(LoginRequiredMixin, DetailView):
     # send a message
     def post(self, request, *args, **kwargs):
         # print("sender: ", request.POST.get("you"))
-        # print("receiver: ", request.POST.get('reciever'))
+        # print("recipient: ", request.POST.get('recipient'))
         sender = UserProfile.objects.get(pk=request.POST.get('you'))  # get the sender of the message(the person sending it)
-        reciever = UserProfile.objects.get(pk=request.POST.get('reciever'))  # get the reciever of the message(You)
+        recipient = UserProfile.objects.get(pk=request.POST.get('recipient'))  # get the recipient of the message(You)
         message = request.POST.get('message')  # get the message from the form
 
         # if the sender is logged in, send the message
         if request.user.is_authenticated:
             if request.method == 'POST':
                 if message:
-                    Message.objects.create(sender=sender, reciever=reciever, message=message)
-            return redirect('chat:inbox', username=reciever.username)  # redirect to the inbox of the reciever
+                    Message.objects.create(sender=sender, recipient=recipient, message=message)
+            return redirect('chat:inbox', username=recipient.username)  # redirect to the inbox of the recipient
 
         else:
             return render(request, 'auth/login.html')

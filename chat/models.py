@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractUser
 
 class UserProfile(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(max_length=254, unique=True)
+    email = models.EmailField(unique=True)
 
     def __str__(self):
         return self.username
@@ -26,7 +26,7 @@ class UserProfile(AbstractUser):
 # ---------------------------------------------------------------------------- #
 class Message(models.Model):
     sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sender')
-    reciever = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='reciever')
+    recipient = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='recipient')
     message = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
@@ -42,13 +42,13 @@ class Message(models.Model):
 
     # function gets all messages between 'the' two users (requires your pk and the other user pk)
     def get_all_messages(id_1, id_2):
-        #     # here we'll treat you(that is log in and checking the messages) as the reciever
+        #     # here we'll treat you(that is log in and checking the messages) as the recipient
         messages = []
         # get messages between the two users, sort them by date(reverse) and add them to the list
-        message1 = Message.objects.filter(sender_id=id_1, reciever_id=id_2).order_by('-date')
+        message1 = Message.objects.filter(sender_id=id_1, recipient_id=id_2).order_by('-date')
         for x in range(len(message1)):
             messages.append(message1[x])
-        message2 = Message.objects.filter(sender_id=id_2, reciever_id=id_1).order_by('-date')
+        message2 = Message.objects.filter(sender_id=id_2, recipient_id=id_1).order_by('-date')
         for x in range(len(message2)):
             messages.append(message2[x])
         # print(messages)
@@ -67,7 +67,7 @@ class Message(models.Model):
         j = []  # stores all usernames from the messages above after removing duplicates
         k = []  # stores the latest message from the sorted usernames above
         for message in Message.objects.all():
-            for_you = message.reciever == u  # check if the message is for you
+            for_you = message.recipient == u  # check if the message is for you
             from_you = message.sender == u  # check if the message is from you
             if for_you or from_you:  # if the message is for you or from you, add it to the queryset and sort it
                 m.append(message)
@@ -76,9 +76,9 @@ class Message(models.Model):
 
         # remove duplicates usernames and get single message(latest message) per username(other user) (between you and other user)
         for i in m:
-            if i.sender.username not in j or i.reciever.username not in j:
+            if i.sender.username not in j or i.recipient.username not in j:
                 j.append(i.sender.username)
-                j.append(i.reciever.username)
+                j.append(i.recipient.username)
                 k.append(i)
 
 
