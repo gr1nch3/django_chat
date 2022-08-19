@@ -4,7 +4,7 @@
 {% for mess in message %}
 
 {% for us in other_users %}
-{% if us.pk == mess.reciever.pk or us.pk == mess.sender.pk  %}
+{% if us.pk == mess.recipient.pk or us.pk == mess.sender.pk  %}
 <!-- contact box 1-->
 <div class=" mb-1 bg-slate-300 h-16 flex flex-row border-y border-slate-600 cursor-pointer active:bg-slate-700"
     onclick="location.href='{% url 'chat:inbox' us %}';">
