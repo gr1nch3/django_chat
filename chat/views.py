@@ -1,11 +1,9 @@
-
 from .forms import UserCreation
+from django.http import JsonResponse
 from django.contrib.auth import login
 from .models import Message, UserProfile
 from django.views.generic import DetailView, ListView
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 
 
@@ -44,49 +42,40 @@ def signup(request):
         userform = UserCreation()
     return render(request, 'auth/signup.html', {'form': userform})
 
-
-# ------------------------ Function to send a message ------------------------ #
-
-
-
 # ---------------------------------------------------------------------------- #
 #                               Class based Views                              #
 # ---------------------------------------------------------------------------- #
 
 # ----------------------- Inbox/messages/users list ----------------------- #
-class messages_list(LoginRequiredMixin, ListView):
+class MessagesListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = 'chat/messages_list.html'
-    context_object_name = 'message'
     login_url = '/login/'
 
     # context data for latest message to display
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = UserProfile.objects.get(pk=self.request.user.pk)  # get your primary key
-        mess = Message.get_message_list(user)
+        messages = Message.get_message_list(user) # get all messages between you and the other user
 
-        other_users = []
+        other_users = [] # list of other users
 
-        # getting the other person's name
-        for i in range(len(mess)):
-            if mess[i].sender != user:
-                other_users.append(mess[i].sender)
+        # getting the other person's name fromthe message list and adding them to a list
+        for i in range(len(messages)):
+            if messages[i].sender != user:
+                other_users.append(messages[i].sender)
             else:
-                other_users.append(mess[i].recipient)
+                other_users.append(messages[i].recipient)
 
-        # getting the latest message from the other person
-        # print("length of other_user", len(other_users))
-        # print(other_users)
 
-        context['message'] = Message.get_message_list(user)
+        context['messages_list'] = messages
         context['other_users'] = other_users
         context['you'] = user
         return context
 
 
 # --------------------------------- Chat view -------------------------------- #
-class inbox(LoginRequiredMixin, DetailView):
+class InboxView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = 'chat/inbox.html'
     login_url = '/login/'
@@ -102,29 +91,31 @@ class inbox(LoginRequiredMixin, DetailView):
         UserName= self.kwargs.get("username")
         return get_object_or_404(UserProfile, username=UserName)
 
+
+
     # context data for the chat view
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = UserProfile.objects.get(pk=self.request.user.pk)  # get your primary key
         other_user = UserProfile.objects.get(username=self.kwargs.get("username"))  # get the other user's primary key
-        mess = Message.get_message_list(user) # get the message list  user
+        messages = Message.get_message_list(user) # get all messages between you and the other user
 
-        other_users = []
+        other_users = [] # list of other users
 
-        # getting the other person's name (for message_list)
-        for i in range(len(mess)):
-            if mess[i].sender != user:
-                other_users.append(mess[i].sender)
+        # getting the other person's name fromthe message list and adding them to a list
+        for i in range(len(messages)):
+            if messages[i].sender != user:
+                other_users.append(messages[i].sender)
             else:
-                other_users.append(mess[i].recipient)
+                other_users.append(messages[i].recipient)
 
         sender = other_user  # the sender of the message will be the recipient of the most recent message after it's sent
-        recipient = user
+        recipient = user # the recipient of the message will be the sender of the most recent message after it's sent
 
-        context['messages'] = Message.get_all_messages(sender, recipient)  # get all the messages between the sender and the recipient
-        context['message'] = Message.get_message_list(user) # for message_list
-        context['other_person'] = other_user  # get the sender of the message (provide the sender's username to the send_message function)
-        context['you'] = user  # get the recipient of the message (provide the recipient's username to the send_message function)
+        context['messages'] = Message.get_all_messages(sender, recipient)  # get all the messages between the sender(you) and the recipient (the other user)
+        context['messages_list'] = messages # for MessagesListView template
+        context['other_person'] = other_user  # get the other person you are chatting with from the username provided
+        context['you'] = user  # send your primary key to the post
         context['other_users'] = other_users
 
         return context
@@ -148,7 +139,7 @@ class inbox(LoginRequiredMixin, DetailView):
             return render(request, 'auth/login.html')
 
 # -------------------------------- Users list -------------------------------- #
-class users_list(LoginRequiredMixin, ListView):
+class UserListsView(LoginRequiredMixin, ListView):
     model = UserProfile
     template_name = 'chat/users_list.html'
     context_object_name = 'users'

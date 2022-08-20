@@ -42,22 +42,20 @@ class Message(models.Model):
 
     # function gets all messages between 'the' two users (requires your pk and the other user pk)
     def get_all_messages(id_1, id_2):
-        #     # here we'll treat you(that is log in and checking the messages) as the recipient
         messages = []
         # get messages between the two users, sort them by date(reverse) and add them to the list
-        message1 = Message.objects.filter(sender_id=id_1, recipient_id=id_2).order_by('-date')
+        message1 = Message.objects.filter(sender_id=id_1, recipient_id=id_2).order_by('-date') # get messages from sender to recipient
         for x in range(len(message1)):
             messages.append(message1[x])
-        message2 = Message.objects.filter(sender_id=id_2, recipient_id=id_1).order_by('-date')
+        message2 = Message.objects.filter(sender_id=id_2, recipient_id=id_1).order_by('-date') # get messages from recipient to sender
         for x in range(len(message2)):
             messages.append(message2[x])
-        # print(messages)
+
         # because the function is called when viewing the chat, we'll return all messages as read
         for x in range(len(messages)):
             messages[x].is_read = True
         # sort the messages by date
         messages.sort(key=lambda x: x.date, reverse=False)
-        # print(messages)
         return messages
 
     # function gets all messages between 'any' two users (requires your pk)
@@ -67,9 +65,9 @@ class Message(models.Model):
         j = []  # stores all usernames from the messages above after removing duplicates
         k = []  # stores the latest message from the sorted usernames above
         for message in Message.objects.all():
-            for_you = message.recipient == u  # check if the message is for you
-            from_you = message.sender == u  # check if the message is from you
-            if for_you or from_you:  # if the message is for you or from you, add it to the queryset and sort it
+            for_you = message.recipient == u  # messages received by the user
+            from_you = message.sender == u  # messages sent by the user
+            if for_you or from_you:
                 m.append(message)
                 m.sort(key=lambda x: x.sender.username)  # sort the messages by senders
                 m.sort(key=lambda x: x.date, reverse=True)  # sort the messages by date
@@ -80,12 +78,5 @@ class Message(models.Model):
                 j.append(i.sender.username)
                 j.append(i.recipient.username)
                 k.append(i)
-
-
-
-        # print("messages m: ", m)
-        # print("messages j: ", j)
-        # print("messages k: ", k)
-        # print("messages k length: ", len(k))
 
         return k
