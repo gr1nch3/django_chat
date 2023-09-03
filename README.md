@@ -32,6 +32,13 @@ A Django chat application (without `Django_channels`) forked from **@gr1nch3**'s
 -> pip install Django crispy-tailwind
 ```
 
+5. Install node modules 
+
+```bash
+-> cd theme
+-> npm install
+```
+
 4. Run migrations
 
 ```
