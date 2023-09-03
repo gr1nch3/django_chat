@@ -1,3 +1,3 @@
-# django_chat
+# Chat (Django)
 
-A django chat application without Django_channels
+A Django chat application (without `Django_channels`) forked from **@gr1nch3**'s [django_chat](https://github.com/gr1nch3/django_chat).
