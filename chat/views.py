@@ -23,10 +23,9 @@ def signup(request):
             uf.save()
 
             # Login the user and redirect to the home page
-            if uf is not None:
-                if uf.is_active:
-                    login(request, uf)  # login the user
-                    return redirect('chat:message_list')  # redirect to the home page
+            if uf and uf.is_active:
+                login(request, uf)  # login the user
+                return redirect('chat:message_list')  # redirect to the home page
 
         else:
             # used dictionary to know the field and the error
@@ -86,7 +85,7 @@ class InboxView(LoginRequiredMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(self.request, *args, **kwargs)
 
-    # overide detailview default request pk or slug to get username instead
+    # override detailView default request pk or slug to get username instead
     def get_object(self):
         UserName= self.kwargs.get("username")
         return get_object_or_404(UserProfile, username=UserName)
@@ -102,7 +101,7 @@ class InboxView(LoginRequiredMixin, DetailView):
 
         other_users = [] # list of other users
 
-        # getting the other person's name fromthe message list and adding them to a list
+        # getting the other person's name from the message list and adding them to a list
         for i in range(len(messages)):
             if messages[i].sender != user:
                 other_users.append(messages[i].sender)
@@ -128,15 +127,11 @@ class InboxView(LoginRequiredMixin, DetailView):
         recipient = UserProfile.objects.get(pk=request.POST.get('recipient'))  # get the recipient of the message(You)
         message = request.POST.get('message')  # get the message from the form
 
-        # if the sender is logged in, send the message
-        if request.user.is_authenticated:
-            if request.method == 'POST':
-                if message:
-                    Message.objects.create(sender=sender, recipient=recipient, message=message)
-            return redirect('chat:inbox', username=recipient.username)  # redirect to the inbox of the recipient
-
-        else:
+        if not request.user.is_authenticated:
             return render(request, 'auth/login.html')
+        if message and request.method == 'POST':
+            Message.objects.create(sender=sender, recipient=recipient, message=message)
+        return redirect('chat:inbox', username=recipient.username)  # redirect to the inbox of the recipient
 
 # -------------------------------- Users list -------------------------------- #
 class UserListsView(LoginRequiredMixin, ListView):
